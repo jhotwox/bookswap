@@ -1,4 +1,8 @@
 <?php
+	header("Access-Control-Allow-Origin: *");
+	header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+	header("Access-Control-Allow-Headers: Content-Type");
+	
 	require_once "include/functions.php";
 	require_once "include/db_tools.php";
 
@@ -10,7 +14,7 @@
 	require_once "extensiones/vendor/autoload.php";
 
 	
-	require 'variables.php';	
+	require 'variables.php';
 
 	/*
 		#region valida_sesion
@@ -1071,6 +1075,7 @@ if(Requesting("action") == "aceptar_denegar_prestamo") {
 
 #region acordar fechas
 if(Requesting("action") == "acordar_fechas"){
+	file_put_contents('debudg.txt', print_r($_POST, true));
 	$id_prestamo = Requesting("id_prestamo");
 	$fecha_inicio = Requesting("fecha_inicio");
 	$fecha_fin = Requesting("fecha_fin");
@@ -1095,15 +1100,12 @@ if(Requesting("action") == "acordar_fechas"){
         $resultStatus = "error";
 	}
 
-
-
-
 	$result = array(   
 		'id_prestamo'			=> $id_prestamo,
 		'result' 				=> $resultStatus, 
 		'result_text' 			=> $resultText
 	);		 
-	XML_Envelope($result);  
+	XML_Envelope($result);
 	exit;
 }
 
@@ -1133,6 +1135,7 @@ if(Requesting("action") == "llenar_form_confirmar_fechas"){
 
 #region verificar fechas
 if(Requesting("action") == "verificar_fechas"){
+	file_put_contents('debug.txt', print_r($_POST, true));
 	$accion = Requesting("accion");
 	$id_prestamo = Requesting("id_prestamo");
 

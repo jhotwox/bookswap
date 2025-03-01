@@ -1386,7 +1386,7 @@ function acordar_fechas(){
 	continua = 1;
 
 	$("#form_acordar_fechas .obligatorio").each(function (index) {
-		
+		console.log("Bandera 1");
 		if ($(this).val() == "") {
 			continua = 0;
 			Swal.fire({
@@ -1397,10 +1397,10 @@ function acordar_fechas(){
 				timerProgressBar: true,
 			})
 			return;
-		} 
-
+		}
 	});
 
+	console.log("Bandera 2");
 	if(fecha_inicio > fecha_fin){
 		continua = 0;
 		Swal.fire({
@@ -1413,7 +1413,7 @@ function acordar_fechas(){
 		return;
 	}
 
-
+	console.log("Bandera 3");
 	if(continua == 1){
 		$.post("controller.php",
 		{    	action 		: "acordar_fechas",
@@ -1426,11 +1426,13 @@ function acordar_fechas(){
 
 
 function end_acordar_fechas(xml){
+	console.log("Bandera 4");
+	console.log("Result -> ", $(xml).find("response").text());
 	$(xml).find("response").each(function(i){         
-        if ($(this).find("result").text()=="ok"){     
+        console.log("Bandera 5");
+		if ($(this).find("result").text()=="ok"){     
 			$("#modalAcordarFechas").modal('hide');
 			$("#tabla_prestamo").load(location.href + " #tabla_prestamo");  
-
 			Swal.fire({
 				icon: 'success',
 				title: '¡Correcto!',
@@ -1438,9 +1440,7 @@ function end_acordar_fechas(xml){
 				timer: 1000,
 				timerProgressBar: true,
 			})
-
-
-        }  else{
+        } else {
 			Swal.fire({
 				icon: 'error',
 				title: '¡Error!',
@@ -1449,6 +1449,7 @@ function end_acordar_fechas(xml){
 				timerProgressBar: true,
 			})
 		}
+		console.log("Bandera 6");
     });
 }
 

@@ -533,7 +533,7 @@ session_start();
                                                     $fecha_fin = GetValueSQL($query11, 'fecha_fin');
                                                     $id_status_prestamo = GetValueSQL($query11, 'status_prestamo');
                                                     $status_prestamo = GetValueSQL($query11, 'status_nombre');
-
+                                                    
                                                     if($fecha_fin == NULL){
                                                         $fecha_fin = "Por acordar";
                                                     }
@@ -817,14 +817,14 @@ session_start();
                                     <tbody>
 
                                         <?php 
-                                        $query5 = "SELECT COUNT(*) AS cuantos FROM prestamos WHERE id_usuario_destino = $id_usuario_global AND status_prestamo = 2 OR status_prestamo = 3";
+                                        $query5 = "SELECT COUNT(*) AS cuantos FROM prestamos WHERE id_usuario_destino = $id_usuario_global AND (status_prestamo = 2 OR status_prestamo = 3)";
                                         $cuantos_prestamos = GetValueSQL($query5, 'cuantos');
 
                                         if($cuantos_prestamos > 0){
                                             $query6 = "SELECT * FROM prestamos
                                             INNER JOIN libros ON prestamos.id_libro = libros.id_libro
                                             INNER JOIN status_libro ON prestamos.status_prestamo = status_libro.id_status
-                                            WHERE id_usuario_destino = $id_usuario_global AND status_prestamo = 2 OR status_prestamo = 3
+                                            WHERE id_usuario_destino = $id_usuario_global AND (status_prestamo = 2 OR status_prestamo = 3)
                                             ORDER BY id_prestamo DESC";
                                             $prestamos_recibidos = DatasetSQL($query6);
 
@@ -1518,7 +1518,7 @@ session_start();
                                                         <td class="text-center">
                                                             <div class="rating" id="rating-'.$id_prestamo.'">
                                                             </div>
-                                                            <button class="btn btn-info btn-lg" onclick="activar_agregar_review(<?php echo $id_libro; ?>)" data-bs-toggle="modal" data-bs-target="#modalAgregarReview" data-bs-whatever="@mdo" data-id="'.$id_libro.'">Agregar reseña</button>
+                                                            <button class="btn btn-info btn-lg" onclick="activar_agregar_review(<?php echo $id_libro; ?>)" data-bs-toggle="modal" data-bs-target="#modalAgregarReview" data-bs-whatever="@mdo" data-id_libro="'.$id_libro.'" data-id_reviewer="'.$id_usuario_global.'">Agregar reseña</button>
                                                         </td>
                                                         
                                                     </tr>';
@@ -2084,6 +2084,8 @@ session_start();
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <input type="hidden" id="id_libro">
+                    <input type="hidden" id="id_reviewer">
                     <form id="form_agregar_review" name="form_agregar_review">
                         <div class="form-group row m-2">
                             <p class="h3 text-dark" >Reseña</p>
@@ -2144,42 +2146,67 @@ session_start();
         //     modal.find('#el_id_libro').val(id);
         // });
 
+        var modalAcordar = document.getElementById('modalAcordarFechas');
 
-        $('#modalAcordarFechas').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget);
-            var id_prestamo = button.data('id');
-            var modal = $(this);
-            // console.log(id);
-            modal.find('#id_prestamo').val(id_prestamo);
+        modalAcordar.addEventListener('show.bs.modal', (e) => {
+            var button = event.relatedTarget;
+            var id_prestamo = button.getAttribute('data-id');
+            console.log("ID -> ", id_prestamo);
+            var inputIdPrestamo = modalAcordar.querySelector('#id_prestamo');
+            inputIdPrestamo.value = id_prestamo;
         });
-
         
-        $('#modalVerificarFechas').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget);
-            var id_prestamo = button.data('id');
-            var modal = $(this);
-            // console.log(id);
-            modal.find('#id_prestamo_fechas').val(id_prestamo);
+        var modalVerificar = document.getElementById('modalVerificarFechas');
+
+        modalVerificar.addEventListener('show.bs.modal', (e) => {
+            var button = event.relatedTarget;
+            var id_prestamo = button.getAttribute('data-id');
+            console.log("ID -> ", id_prestamo);
+            var inputIdPrestamo = modalVerificar.querySelector('#id_prestamo_fechas');
+            inputIdPrestamo.value = id_prestamo;
         });
 
-        
-        $('#modalFinalizarPrestamo').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget);
-            var id_libro = button.data('id');
-            var modal = $(this);
-            // console.log(id);
-            modal.find('#fp_id_libro').val(id_libro);
+        // $('#modalVerificarFechas').on('show.bs.modal', function (event) {
+        //     var button = $(event.relatedTarget);
+        //     var id_prestamo = button.data('id');
+        //     var modal = $(this);
+        //     // console.log(id);
+        //     modal.find('#id_prestamo_fechas').val(id_prestamo);
+        // });
+
+        var modalFinalizar = document.getElementById('modalFinalizarPrestamo');
+
+        modalFinalizar.addEventListener('show.bs.modal', (e) => {
+            var button = event.relatedTarget;
+            var id_prestamo = button.getAttribute('data-id');
+            console.log("ID -> ", id_prestamo);
+            var inputIdPrestamo = modalFinalizar.querySelector('#fp_id_libro');
+            inputIdPrestamo.value = id_prestamo;
         });
 
-
-        // $('#modalAgregarReview').on('show.bs.modal', function (event) {
+        // $('#modalFinalizarPrestamo').on('show.bs.modal', function (event) {
         //     var button = $(event.relatedTarget);
         //     var id_libro = button.data('id');
         //     var modal = $(this);
         //     // console.log(id);
         //     modal.find('#fp_id_libro').val(id_libro);
         // });
+
+        var modalReview = document.getElementById('modalAgregarReview');
         
+        let id_libro_global = null;
+        let id_reviewer_global = null;
+        modalReview.addEventListener('show.bs.modal', (e) => {
+            var button = event.relatedTarget;
+            id_libro_global = button.getAttribute('data-id_libro');
+            id_reviewer_global = button.getAttribute('data-id_reviewer');
+            // console.log("ID libro -> ", id_libro_global);
+            // console.log("ID reviewer -> ", id_reviewer_global);
+            var inputIdLibro = modalReview.querySelector('#id_libro');
+            var inputIdReviewer = modalReview.querySelector('#id_reviewer');
+            inputIdLibro.value = id_libro_global;
+            inputIdReviewer.value = id_reviewer_global;
+        });
 
 	</script>
 
@@ -2208,10 +2235,12 @@ session_start();
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
 
-        var id_libro = "<?php echo $id_libro ?>";
-        var codigo_reviewer = "<?php echo $id_usuario_global ?>";
-
-        var id_review = codigo_reviewer;
+        // var id_libro = id_libro_global;
+        // var id_review = id_reviewer_global;
+        // var id_libro = document.getElementById('modalAgregarReview').querySelector('#id_libro').value;
+        // var id_review = document.getElementById('modalAgregarReview').querySelector('#id_reviewer').value;
+        // console.log("id_libro -> ", id_libro);
+        // console.log("id_review -> ", id_review);
 
         var nombres = "<?php echo $nombres; ?>";
         var apellidos = "<?php echo $apellidos; ?>";
@@ -2229,6 +2258,8 @@ session_start();
 				var review = $("#review").val();
 
 				var maxLength = 1000; // Define el máximo número de caracteres permitidos
+                var id_libro = id_libro_global;
+                var id_reviewer = id_reviewer_global;
 
 				if (review.length > maxLength) {
 					Swal.fire({
@@ -2253,7 +2284,7 @@ session_start();
 					return;
 				}
 
-				const reviewsRef = ref(database, 'reviews/' + id_libro + '/' + id_review);
+				const reviewsRef = ref(database, 'reviews/' + id_libro + '/' + id_reviewer);
 
 				set(reviewsRef, {
 					sender: nombre_completo,
