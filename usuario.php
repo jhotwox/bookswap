@@ -187,7 +187,7 @@ session_start();
     if(isset($_GET['id'])) {
 		$id_usuario_local = $_GET['id'];
         // echo "<script>console.log('ID: " . addsslashes($id_usuario_local) . "');</script>";
-        $query0 = "SELECT COUNT(*) AS existe FROM usuarios WHERE id_usuario = $id_usuario_local && id_usuario > 0 && num_strikes < 3";
+        $query0 = "SELECT COUNT(*) AS existe FROM usuarios WHERE id_usuario = $id_usuario_local && id_usuario > 0 && num_strikes < 5";
         $existe = GetValueSQL($query0, 'existe');
         // echo "<script>console.log('Existe: ', $existe)</script>";
         if($existe == 0) {
@@ -414,7 +414,7 @@ session_start();
                 <div class="modal-footer">
                     <div class="form-group">
                         <button type="button" class="btn ps-btn" data-bs-dismiss="modal" style="background-color: gray;">Cancelar</button>
-                        <button type="button" class="btn ps-btn" onclick='nuevo_strike_usuario(<?php echo $id_usuario_local; ?>, event)'>Reportar</button>
+                        <button type="button" class="btn ps-btn" onclick='strike_usuario(<?php echo $id_usuario_local; ?>)'>Reportar</button>
                     </div>
                 </div>
             </div>
