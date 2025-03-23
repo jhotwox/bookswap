@@ -1546,6 +1546,45 @@ function end_finalizar_prestamo(xml){
     });
 }
 
+// #region finalizar prestamo con strike
+function finalizar_prestamo_con_strike(){
+	var id_libro = $("#fp_id_libro").val();
+	console.log("Band 1");
+	console.log("id_libro desde controlador: ", id_libro);
+
+    $.post("controller.php",
+    {       action         : "finalizar_prestamo_con_strike",
+			id_libro      : id_libro
+    }, end_finalizar_prestamo_con_strike);
+}
+
+function end_finalizar_prestamo_con_strike(xml){
+	$(xml).find("response").each(function(i){         
+        if ($(this).find("result").text()=="ok"){     
+			$("#modalFinalizarPrestamo").modal('hide');
+			$("#tabla_prestamo").load(location.href + " #tabla_prestamo");  
+
+			Swal.fire({
+				icon: 'success',
+				title: '¡Correcto!',
+				text: $(this).find("result_text").text(),
+				timer: 1000,
+				timerProgressBar: true,
+			})
+
+
+        }  else{
+			Swal.fire({
+				icon: 'error',
+				title: '¡Error!',
+				text: $(this).find("result_text").text(),
+				timer: 1000,
+				timerProgressBar: true,
+			})
+		}
+    });
+}
+
 // #region Cancelar prestamo
 function cancelar_prestamo(id_prestamo){
 	$.post("controller.php",

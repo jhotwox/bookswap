@@ -187,7 +187,7 @@ session_start();
     if(isset($_GET['id'])) {
 		$id_usuario_local = $_GET['id'];
         // echo "<script>console.log('ID: " . addsslashes($id_usuario_local) . "');</script>";
-        $query0 = "SELECT COUNT(*) AS existe FROM usuarios WHERE id_usuario = $id_usuario_local && id_usuario > 0 && num_strikes < 3";
+        $query0 = "SELECT COUNT(*) AS existe FROM usuarios WHERE id_usuario = $id_usuario_local && id_usuario > 0 && num_strikes < 5";
         $existe = GetValueSQL($query0, 'existe');
         // echo "<script>console.log('Existe: ', $existe)</script>";
         if($existe == 0) {
@@ -305,8 +305,7 @@ session_start();
                                         <p><i class="fas fa-calendar-days"></i> Ciclo de ingreso: <?php echo $ciclo_ingreso; ?></p>
                                         <p><i class="fas fa-star"></i> Calificación: <?php echo $calificacion; ?></p>
                                     </div>
-									<div class="col-12">
-										<button class="btn btn-warning btn-lg" data-bs-toggle="modal" data-bs-target="#modalReportarUsuario" data-bs-whatever="@mdo"><strong>Reportar</strong></button>
+																		<div class="col-12">
                                     </div>
                                 </div>
                             </div>                            

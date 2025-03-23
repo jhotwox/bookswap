@@ -499,8 +499,14 @@ session_start();
                                                         $mensaje_status = '<i class="fas fa-book"></i> '.$status;
                                                     break;
                                                     case 4:
+                                                        $query11 = "SELECT * FROM prestamos 
+                                                        INNER JOIN usuarios ON prestamos.id_usuario_destino = usuarios.id_usuario
+                                                        INNER JOIN status_prestamos ON prestamos.status_prestamo = status_prestamos.id_status
+                                                        WHERE id_libro = $id_libro AND status_prestamo != 4 AND status_prestamo != 6";
+                                                        $fecha_fin = GetValueSQL($query11, 'fecha_fin');
+                                                        
                                                         $cambiar_status_libro = '';
-                                                        $mensaje_status = '<i class="fas fa-book-reader"></i> '.$status.' | <a class="btn btn-link text-danger" style="font-size: 16px;" data-bs-toggle="modal" data-bs-target="#modalFinalizarPrestamo" data-bs-whatever="@mdo" data-id="'.$id_libro.'">Finalizar préstamo</a>';
+                                                        $mensaje_status = '<i class="fas fa-book-reader"></i> '.$status.' | <a class="btn btn-link text-danger" style="font-size: 16px;" data-bs-toggle="modal" data-bs-target="#modalFinalizarPrestamo" data-bs-whatever="@mdo" data-id="'.$id_libro.'" data-fecha_fin='.$fecha_fin.'">Finalizar préstamo</a>';
                                                     break;
                                                 }
 
@@ -2059,14 +2065,17 @@ session_start();
                 </div>
                 <div class="modal-body">
                     <input type="hidden" id="fp_id_libro">
+                    <input type="hidden" id="id_prestamo">
+                    <input type="hidden" id="fp_fecha_fin">
                     <p class="h4">¿Estas seguro de finalizar el préstamo?</p>
-                    
-
                 </div>
                 <div class="modal-footer">
-                    <div class="form-group">
-                        <button type="button" class="btn ps-btn" data-bs-dismiss="modal" style="background-color: gray;">Cancelar</button>
-                        <button type="button" class="btn ps-btn" onclick='finalizar_prestamo()'>Continuar</button>
+                    <div class="form-group d-flex flex-column align-items-start w-100">
+                        <div class="d-flex justify-content-between w-100">
+                            <button type="button" class="btn ps-btn me-2 flex-fill" data-bs-dismiss="modal" style="background-color: gray;">Cancelar</button>
+                            <button type="button" class="btn ps-btn flex-fill" onclick='finalizar_prestamo()'>Continuar</button>
+                        </div>
+                        <button type="button" class="btn ps-btn mt-2 w-100" id="btnStrike" onclick='finalizar_prestamo_con_strike()'>Continuar con strike</button>
                     </div>
                 </div>
             </div>
@@ -2178,10 +2187,36 @@ session_start();
 
         modalFinalizar.addEventListener('show.bs.modal', (e) => {
             var button = event.relatedTarget;
+            
             var id_prestamo = button.getAttribute('data-id');
             console.log("ID -> ", id_prestamo);
             var inputIdPrestamo = modalFinalizar.querySelector('#fp_id_libro');
             inputIdPrestamo.value = id_prestamo;
+            
+            var fechaFin = button.getAttribute('data-fecha_fin');
+            console.log("Fecha fin string -> ", fechaFin);
+            if (fechaFin.endsWith('"'))
+                fechaFin= fechaFin.slice(0, -1);
+            console.log("Fecha fin string final -> ", fechaFin);
+            var inputFechaFin = modalFinalizar.querySelector('#fp_fecha_fin');
+            inputFechaFin.value = fechaFin;
+            
+            //Ocultar botón
+            var btnStrike = modalFinalizar.querySelector('#btnStrike');
+            let [year, month, day]  = fechaFin.split("-");
+            var fechaFinDate = new Date(year, month - 1, day);
+            var fechaActualDate = new Date();
+            
+            fechaFinDate.setHours(0, 0, 0, 0);
+            fechaActualDate.setHours(0, 0, 0, 0);
+            console.log("Fecha hoy -> ", fechaActualDate);
+            console.log("Fecha fin -> ", fechaFinDate);
+
+            console.log("Visible? ", fechaActualDate > fechaFinDate)
+            if (fechaActualDate > fechaFinDate)
+                btnStrike.style.display = "inline-block";
+            else
+                btnStrike.style.display = "none";
         });
 
         // $('#modalFinalizarPrestamo').on('show.bs.modal', function (event) {

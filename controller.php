@@ -1229,6 +1229,7 @@ if(Requesting("action") == "finalizar_prestamo"){
 					$query7 = "UPDATE waitlist SET turno = turno - 1 WHERE id_libro = $id_libro";
 					ExecuteSQL($query7);
 				}
+
 			}
 		} else{
 			$resultText = "Ocurrió un error. Por favor, inténtalo de nuevo. ";
@@ -1249,6 +1250,92 @@ if(Requesting("action") == "finalizar_prestamo"){
 	exit;
 }
 
+
+
+#region finalizar prestamo con strike
+if(Requesting("action") == "finalizar_prestamo_con_strike"){
+	$id_libro = Requesting("id_libro");
+
+	$resultText = "Correcto.";
+	$resultStatus = "ok";
+
+	$query0 = "SELECT COUNT(*) AS existe FROM libros 
+	INNER JOIN prestamos ON libros.id_libro = prestamos.id_libro
+	WHERE status_prestamo = 3";
+	$existe = GetValueSQL($query0, 'existe');
+	
+	if($existe > 0){
+		
+		// Agregar strike si se finaliza fuera de tiempo
+		$query11 = "SELECT * FROM libros INNER JOIN prestamos ON libros.id_libro = prestamos.id_libro WHERE status_prestamo = 3 AND prestamos.id_libro = $id_libro";
+		$id_usuario_destino = GetValueSQL($query11, "id_usuario_destino");
+
+		$query12 = "SELECT num_strikes FROM usuarios WHERE id_usuario = $id_usuario_destino";
+		$num_strikes = GetValueSQL($query12, "num_strikes");
+
+		$query13 = "UPDATE usuarios SET num_strikes = $num_strikes + 1 WHERE id_usuario = $id_usuario_destino";
+		ExecuteSQL($query13);
+
+		if ($num_strikes + 1 > 4) {
+			$query14 = "UPDATE usuarios SET status = 2 WHERE id_usuario = $id_usuario_destino";
+			ExecuteSQL($query14);
+		}
+
+		// Cambiar status de prestamo
+		$query1 = "UPDATE prestamos SET status_prestamo = 4 WHERE id_libro = $id_libro AND status_prestamo = 3";
+		if(ExecuteSQL($query1)){
+			$resultStatus = "ok";
+			$resultText = "Préstamo finalizado.";
+
+			//Cambiar status de libro
+			$query9 = "UPDATE libros SET status = 1 WHERE id_libro = $id_libro";
+			ExecuteSQL($query9);
+
+			//Recorrer waitlist
+			$query10 = "SELECT * FROM libros WHERE id_libro = $id_libro";
+			$id_usuario_owner = GetValueSQL($query10, "id_usuario");
+
+			$query2 = "SELECT COUNT(*) AS cuantos FROM waitlist WHERE id_libro = $id_libro";
+			$cuantos_waitlist = GetValueSQL($query2, 'cuantos');
+
+			if($cuantos_waitlist > 0){ //Hay mas de uno en waitlist 
+				$query3 = "SELECT * FROM waitlist WHERE id_libro = $id_libro AND turno = 1";
+				$id_usuario_destino = GetValueSQL($query3, 'id_usuario');
+
+				$query4 = "INSERT INTO prestamos (id_usuario_owner, id_usuario_destino, id_libro, status_prestamo) 
+				VALUES ($id_usuario_owner, $id_usuario_destino, $id_libro, 1)"; //El turno 1 en la waitlist pasa a la tabla prestamos con status 1 (solicitado)
+				ExecuteSQL($query4);
+
+				$query5 = "DELETE FROM waitlist WHERE id_libro = $id_libro AND turno = 1"; //Se borra el turno 1 de la waitlist
+				ExecuteSQL($query5);
+
+				$query6 = "SELECT COUNT(*) AS cuantos FROM waitlist WHERE id_libro = $id_libro";
+				$cuantos_post_eliminar = GetValueSQL($query6, 'cuantos');
+
+				if($cuantos_post_eliminar > 0){ //Si quedan mas usuarios en la waitlist, se recorre su turno
+					$query7 = "UPDATE waitlist SET turno = turno - 1 WHERE id_libro = $id_libro";
+					ExecuteSQL($query7);
+				}
+
+			}
+		} else{
+			$resultText = "Ocurrió un error. Por favor, inténtalo de nuevo. ";
+            $resultStatus = "error";
+		}
+	} else{
+		$resultText = "No hay un préstamo con este libro activo.";
+		$resultStatus = "error";
+	}
+
+
+
+	$result = array(   
+		'result' 				=> $resultStatus, 
+		'result_text' 			=> $resultText
+	);		 
+	XML_Envelope($result);  
+	exit;
+}
 
 
 #region Cancelar Prestamo Activo
