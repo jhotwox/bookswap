@@ -259,7 +259,7 @@ session_start();
                         if($id_status_usuario != 1) {
                             $mensaje_status = "* Para validar tu cuenta, actualiza tu foto de perfil y la credencial de UDG.";
                             if($num_strikes > 2) {
-                                $mensaje_status = "* Tu cuenta ha sido bloqueada debido a que cometiste 3 infracciones.";
+                                $mensaje_status = "* Tu cuenta ha sido bloqueada debido a que cometiste 5 infracciones.";
                             }
                         } else{
                             $mensaje_status = "";
@@ -403,10 +403,14 @@ session_start();
                 <div class="ps-section__content">
 
                     <ul class="ps-section__links">
-                        <li id="li_prestamos_activos" class="active"><a type="button" href="" onclick="cambiar_opciones_perfil(2, event)">Mis Préstamos</a></li>
-                        <li id="li_prestamos_recibidos"><a type="button" href="" onclick="cambiar_opciones_perfil(6, event)">Préstamos Recibidos</a></li>
-                        <li id="li_mis_libros"><a type="button" href="" onclick="cambiar_opciones_perfil(1, event)">Mis Libros</a></li>
-                        <li id="li_historial_prestamos"><a type="button" href=""  onclick="cambiar_opciones_perfil(3, event)">Historial de Préstamos</a></li>
+                        <?php 
+                            if ($num_strikes < 5) {
+                                echo '<li id="li_prestamos_activos" class="active"><a type="button" href="" onclick="cambiar_opciones_perfil(2, event)">Mis Préstamos</a></li>';
+                                echo '<li id="li_prestamos_recibidos"><a type="button" href="" onclick="cambiar_opciones_perfil(6, event)">Préstamos Recibidos</a></li>';
+                                echo '<li id="li_mis_libros"><a type="button" href="" onclick="cambiar_opciones_perfil(1, event)">Mis Libros</a></li>';
+                                echo '<li id="li_historial_prestamos"><a type="button" href=""  onclick="cambiar_opciones_perfil(3, event)">Historial de Préstamos</a></li>';
+                            }
+                        ?>
                     </ul>                    
 
                     <div class="ps-section--shopping ps-shopping-cart" style="margin-top: -120px;">
@@ -419,8 +423,9 @@ session_start();
                         <div class="container" id="div_prestamos_activos">
 
                             <div class="ps-section__header">
-
-                                <h1>Mis Préstamos</h1>
+                                <?php 
+                                    if ($num_strikes < 5) echo "<h1>Mis Préstamos</h1>";
+                                ?>
 
                             </div>
 
@@ -441,12 +446,15 @@ session_start();
                                     <thead>
 
                                         <tr>
-
-                                            <th>Libro</th>
-                                            <th>Fecha de Préstamo</th>
-                                            <th>Fecha de Entrega</th>
-                                            <th>Estatus</th>
-                                            <th>Préstamos</th>
+                                            <?php 
+                                                if ($num_strikes < 5) {
+                                                    echo "<th>Libro</th>";
+                                                    echo "<th>Fecha de Préstamo</th>";
+                                                    echo "<th>Fecha de Entrega</th>";
+                                                    echo "<th>Estatus</th>";
+                                                    echo "<th>Préstamos</th>";
+                                                }
+                                            ?>
 
                                         </tr>
 
@@ -458,7 +466,7 @@ session_start();
                                         $query5 = "SELECT COUNT(*) AS cuantos FROM libros WHERE id_usuario = $id_usuario_global";
                                         $cuantos_libros = GetValueSQL($query5, 'cuantos');
 
-                                        if($cuantos_libros > 0){
+                                        if($cuantos_libros > 0 && $num_strikes < 5){
                                             $query6 = "SELECT * FROM libros
                                             INNER JOIN status_libro ON libros.status = status_libro.id_status
                                             WHERE id_usuario = $id_usuario_global

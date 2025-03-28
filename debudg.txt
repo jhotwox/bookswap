@@ -1,0 +1,7 @@
+Array
+(
+    [action] => acordar_fechas
+    [id_prestamo] => 36
+    [fecha_inicio] => 2025-03-09
+    [fecha_fin] => 2025-03-15
+)
