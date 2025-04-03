@@ -328,39 +328,12 @@ session_start();
                         $cuantos = GetValueSQL($query2, 'cuantos');
 
                         ?>
-            
-                            <!-- <div class="col-lg-3 col-6">
-                                <div class="text-center">
-                                    <a href="#">
-                                        <h1><i class="fas fa-heart text-white"></i></h1>
-                                        <h4 class="text-white">Wishlist <span class="badge badge-secondary rounded-circle"><?php echo $cuantos;?></span></h4>
-                                    </a>
-                                </div>
-                            </div>
-                
-                            <div class="col-lg-3 col-6">
-                                <div class="text-center">
-                                    <a href="#">
-                                        <h1><i class="fas fa-bell text-white"></i></h1>
-                                        <h4 class="text-white">Nots <span class="badge badge-secondary rounded-circle">51</span></h4>
-                                    </a>
-                                </div>
-                            </div>
-                
-                            <div class="col-lg-3 col-6">
-                                <div class="text-center">
-                                    <a href="#">
-                                        <h1><i class="fas fa-comments text-white"></i></h1>
-                                        <h4 class="text-white">Messages <span class="badge badge-secondary rounded-circle">51</span></h4>
-                                    </a>
-                                </div>
-                            </div> -->
 
                         </div>
 
                     </div>
 
-                </aside><!-- s -->
+                </aside>
                 
                 
                 <div class="ps-section__content">
@@ -368,7 +341,7 @@ session_start();
                     <ul class="ps-section__links">
                         <?php
                         if ($admin_usuario_global == 1) {
-                            echo '<li id="li_strikes_usuarios" class="active"><a type="button" href=""  onclick="cambiar_opciones_perfil(4, event)">Strikes usuarios</a></li>';
+                            echo '<li id="li_strikes_usuarios" class="active"><a type="button" href=""  onclick="cambiar_opciones_perfil(4, event)">Bloquear usuarios</a></li>';
                             echo '<li id="li_validar_usuarios"><a type="button" href=""  onclick="cambiar_opciones_perfil(5, event)">Validar usuarios</a></li>';
                         }
                         ?>
@@ -385,7 +358,7 @@ session_start();
 
                             <div class="ps-section__header">
 
-                                <h1>Strikes usuarios</h1>
+                                <h1>bloquear usuarios</h1>
 
                             </div>
 
@@ -409,7 +382,6 @@ session_start();
 
                                                 <th>ID Usuario</th>
                                                 <th>usuario</th>
-                                                <th>Detalles</th>
                                                 <th>No. Strikes</th>
                                                 <th>Opciones</th>
                                                 
@@ -420,48 +392,31 @@ session_start();
                                         <tbody>
 
                                             <?php 
-                                            $query16 = "SELECT COUNT(*) AS cuantos FROM strikes WHERE status = 1";
+                                            $query16 = "SELECT COUNT(*) AS cuantos FROM usuarios WHERE status = 1 and num_strikes > 4";
                                             $cuantos_strikes = GetValueSQL($query16, 'cuantos');
 
                                             if($cuantos_strikes > 0) {
-                                                $query17 = "SELECT * FROM `strikes` INNER JOIN usuarios ON strikes.id_usuario = usuarios.id_usuario WHERE strikes.status = 1";
+                                                $query17 = "SELECT * FROM `usuarios` WHERE status = 1 AND num_strikes > 4";
                                                 $strikes = DatasetSQL($query17);
 
                                                 while($row17 = mysqli_fetch_array($strikes)){
-                                                    $id_strike = $row17['id_strike'];
                                                     $id_usuario = $row17['id_usuario'];
-                                                    $detalles = $row17['detalles'];
-                                                    $fecha = $row17['fecha'];
                                                     $nombres = $row17['nombres'];
                                                     $apellidos = $row17['apellidos'];
                                                     $num_strikes = $row17['num_strikes'];
-
-                                                    if($fecha == NULL){
-                                                        $fecha = "Sin Año";
-                                                    }
-                                                
-                                                    if($detalles == NULL){
-                                                        $detalles = "Sin detalle";
-                                                    }
-
-                                                    // if($ruta_foto_portada == NULL){
-                                                    //     $ruta_foto_portada = $ruta_foto_no_existente;
-                                                    // }
-
+                                                    
                                                     echo '<tr>
                                                         <td class="text-center">    
                                                             <strong>'.$id_usuario.'</strong>
                                                         </td>
 
                                                         <td class="text-center">'.$nombres.' '. $apellidos.'</td>
-
-                                                        <td class="text-center">'.$detalles.'</td>
                                                         
                                                         <td class="text-center"><strong>'.$num_strikes.'</strong></td>
 
                                                         <td class="text-center">        
-                                                            <a title="Aceptar strike" type="button" onclick="strike_usuario(' . $id_usuario . ', '. $id_strike . ', event)"><i class="fa-solid fa-check"></i></a>&emsp;
-                                                            <a title="Rechazar strike" type="button" onclick="ocultar_strike(' . $id_strike . ', event)"><i class="fa-solid fa-xmark"></i></a>
+                                                            <a title="Bloquear" type="button" onclick="bloquear_usuario(' . $id_usuario . ', event)"><i class="fa-solid fa-check"></i></a>&emsp;
+                                                            <a title="No bloquear" type="button" onclick="no_bloquear_usuario(' . $id_usuario . ', event)"><i class="fa-solid fa-xmark"></i></a>
                                                         </td>
         
                                                     </tr>';

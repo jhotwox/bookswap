@@ -838,7 +838,6 @@ if(Requesting("action") == "validar_usuario"){
 #region strike_usuarios
 if(Requesting("action") == "strike_usuario"){
 	$id_usuario = Requesting("id_usuario");
-	$id_strike = Requesting("id_strike");
 
 	$resultText = "Correcto.";
 	$resultStatus = "ok";
@@ -847,30 +846,14 @@ if(Requesting("action") == "strike_usuario"){
 	$num_strikes = GetValueSQL($query0, 'num_strikes');
 
 	$query1 = "UPDATE usuarios SET num_strikes = $num_strikes + 1 WHERE id_usuario = $id_usuario";
-	$query2 = "UPDATE strikes SET status = 2 WHERE id_strike = $id_strike";
-	$query3 = "UPDATE usuarios SET status = 2 WHERE id_usuario = $id_usuario";
+
 	
 	if(ExecuteSQL($query1)){
-		if(ExecuteSQL($query2)) {
-			if($num_strikes + 1 > 2) {
-				if(ExecuteSQL($query3)) {
-					$resultText = "El strike fue añadido y el usuario suspendido.";
-					$resultStatus = "ok";
-				} else {
-					$resultText = "Ocurrió un error en status. Por favor, inténtalo de nuevo. ";
-        			$resultStatus = "error";
-				}
-			} else {
-				$resultText = "El strike fue añadido.";
-				$resultStatus = "ok";
-			}
-		} else {
-			$resultText = "Ocurrió un error en strikes. Por favor, inténtalo de nuevo. ";
-        	$resultStatus = "error";
-		}
-	} else{
+		$resultText = "El strike fue añadido.";
+		$resultStatus = "ok";
+	} else {
 		$resultText = "Ocurrió un error en usuarios. Por favor, inténtalo de nuevo. ";
-        $resultStatus = "error";
+		$resultStatus = "error";
 	}
 
 	$result = array(   
@@ -914,12 +897,62 @@ if(Requesting("action") == "nuevo_strike_usuario"){
 	$resultText = "Correcto.";
 	$resultStatus = "ok";
 
-	$query1 = "INSERT INTO strikes (id_usuario, detalles, status) VALUES ($id_usuario, '$detalles', 1)";
+	$query1 = "INSERT INTO strikes (id_usuario, detalles, status) VALUES ($id_usuario, '$detalles', 2)";
 	
 	if(ExecuteSQL($query1)) {
 		$resultText = "El strike se revisara proximamente.";
 		$resultStatus = "ok";
 	} else {
+		$resultText = "Ocurrió un error. Por favor, inténtalo de nuevo. ";
+        $resultStatus = "error";
+	}
+
+	$result = array(   
+		'result' 				=> $resultStatus,
+		'result_text' 			=> $resultText
+	);		 
+	XML_Envelope($result);
+	exit;
+}
+
+#region bloquear usuario
+if(Requesting("action") == "bloquear_usuario"){
+	$id_usuario = Requesting("id_usuario");
+
+	$resultText = "Correcto.";
+	$resultStatus = "ok";
+
+	$query1 = "UPDATE usuarios SET status = 2 WHERE id_usuario = $id_usuario";
+	
+	if(ExecuteSQL($query1)){
+		$resultText = "El usuario fue bloqueado.";
+		$resultStatus = "ok";
+	} else{
+		$resultText = "Ocurrió un error. Por favor, inténtalo de nuevo. ";
+        $resultStatus = "error";
+	}
+
+	$result = array(   
+		'result' 				=> $resultStatus,
+		'result_text' 			=> $resultText
+	);		 
+	XML_Envelope($result);
+	exit;
+}
+
+#region np bloquear usuario
+if(Requesting("action") == "no_bloquear_usuario"){
+	$id_usuario = Requesting("id_usuario");
+
+	$resultText = "Correcto.";
+	$resultStatus = "ok";
+
+	$query1 = "UPDATE usuarios SET num_strikes = 4 WHERE id_usuario = $id_usuario";
+	
+	if(ExecuteSQL($query1)){
+		$resultText = "El usuario no fue bloqueado.";
+		$resultStatus = "ok";
+	} else{
 		$resultText = "Ocurrió un error. Por favor, inténtalo de nuevo. ";
         $resultStatus = "error";
 	}

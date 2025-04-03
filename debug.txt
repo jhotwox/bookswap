@@ -1,0 +1,6 @@
+Array
+(
+    [action] => verificar_fechas
+    [accion] => 1
+    [id_prestamo] => 36
+)

@@ -187,7 +187,7 @@ session_start();
     if(isset($_GET['id'])) {
 		$id_usuario_local = $_GET['id'];
         // echo "<script>console.log('ID: " . addsslashes($id_usuario_local) . "');</script>";
-        $query0 = "SELECT COUNT(*) AS existe FROM usuarios WHERE id_usuario = $id_usuario_local && id_usuario > 0 && num_strikes < 3";
+        $query0 = "SELECT COUNT(*) AS existe FROM usuarios WHERE id_usuario = $id_usuario_local && id_usuario > 0 && status = 1";
         $existe = GetValueSQL($query0, 'existe');
         // echo "<script>console.log('Existe: ', $existe)</script>";
         if($existe == 0) {
@@ -403,18 +403,10 @@ session_start();
                     <h3 class="modal-title title" id="exampleModalLabel">Reportar usuario</h3>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <form id="form_reportar_usuario" name="form_reportar_usuario">
-                        <div class="form-group row m-2">
-                            <p class="h3 text-dark" >Razón: </p>
-                            <input class="obligatorio form-control" type="text" id="ns_detalles" name="ns_detalles" placeholder="Razón" required>
-                        </div>
-                    </form>
-                </div>
                 <div class="modal-footer">
-                    <div class="form-group">
-                        <button type="button" class="btn ps-btn" data-bs-dismiss="modal" style="background-color: gray;">Cancelar</button>
-                        <button type="button" class="btn ps-btn" onclick='nuevo_strike_usuario(<?php echo $id_usuario_local; ?>, event)'>Reportar</button>
+                    <div class="form-group d-flex w-100">
+                        <button type="button" class="btn ps-btn flex-grow-1 me-2" data-bs-dismiss="modal" style="background-color: gray;">Cancelar</button>
+                        <button type="button" class="btn ps-btn flex-grow-1" onclick='strike_usuario(<?php echo $id_usuario_local; ?>)'>Reportar</button>
                     </div>
                 </div>
             </div>

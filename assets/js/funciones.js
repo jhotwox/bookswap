@@ -1228,29 +1228,37 @@ function end_validar_usuario(xml){
 }
 
 // #region strike_usuario
-function strike_usuario(id_usuario, id_strike) {
+function strike_usuario(id_usuario) {
 	$.post("controller.php",
     {    	action 			: "strike_usuario",
        	 	id_usuario  	: id_usuario,
-       	 	id_strike  	: id_strike,
     }, end_strike_usuario);
 }
 
 function end_strike_usuario(xml) {
 	$(xml).find("response").each(function(i) {
-        if ($(this).find("result").text()=="ok") {
+		if ($(this).find("result").text()=="ok") {
 
+			// $("#form_reportar_usuario")[0].reset();
+			// $('#modalReportarUsuario').modal("hide");
+			
+			document.getElementById('modalReportarUsuario').classList.remove('show');
+			document.getElementById('modalReportarUsuario').setAttribute('aria-hidden', 'true');
+			$('.modal-backdrop').remove(); // Elimina el fondo oscuro en caso de que persista
+			// document.body.classList.remove('modal-open');
+			
 			Swal.fire({
 				icon: 'success',
 				title: '¡Strike puesto!',
 				text: $(this).find("result_text").text(),
 				timer: 1000,
 				timerProgressBar: true,
+				willClose: () => window.history.back(),
 			})
 
-			$("#div_strikes_usuarios").load(location.href + " #div_strikes_usuarios");  
+			// $("#div_usuario").load(location.href + "# div_usuario");
 
-        }  else {
+		}  else {
 			Swal.fire({
 				icon: 'error',
 				title: '¡Error!',
@@ -1275,14 +1283,15 @@ function nuevo_strike_usuario(id_usuario, detalles) {
 
 function end_nuevo_strike_usuario(xml) {
 	$(xml).find("response").each(function(i) {
-        if ($(this).find("result").text()=="ok") {
+		if ($(this).find("result").text()=="ok") {
 
+			
 			$("#form_reportar_usuario")[0].reset();
 			$('#modalReportarUsuario').modal("hide");
 
 			Swal.fire({
 				icon: 'success',
-				title: '¡Strike enviado a consulta!',
+				title: '¡Strike creado!',
 				text: $(this).find("result_text").text(),
 				timer: 1000,
 				timerProgressBar: true,
@@ -1290,7 +1299,7 @@ function end_nuevo_strike_usuario(xml) {
 
 			$("#div_usuario").load(location.href + " #div_usuario");  
 
-        }  else {
+		}  else {
 			Swal.fire({
 				icon: 'error',
 				title: '¡Error!',
@@ -1334,6 +1343,72 @@ function end_ocultar_strike(xml) {
 			})
 		}
     });
+}
+
+function bloquear_usuario(id_usuario) {
+	$.post("controller.php",
+    {    	action 			: "bloquear_usuario",
+       	 	id_usuario  	: id_usuario,
+    }, end_bloquear_usuario);
+}
+
+function end_bloquear_usuario(xml) {
+	$(xml).find("response").each(function(i) {
+		if ($(this).find("result").text()=="ok") {
+
+		Swal.fire({
+			icon: 'success',
+			title: '¡Usuario bloqueado!',
+			text: $(this).find("result_text").text(),
+			timer: 1000,
+			timerProgressBar: true,
+		})
+
+		$("#div_strikes_usuarios").load(location.href + " #div_strikes_usuarios");
+
+		} else {
+			Swal.fire({
+				icon: 'error',
+				title: '¡Error!',
+				text: $(this).find("result_text").text(),
+				timer: 1000,
+				timerProgressBar: true,
+			})
+		}
+	});
+}
+
+function no_bloquear_usuario(id_usuario) {
+	$.post("controller.php",
+    {    	action 			: "no_bloquear_usuario",
+       	 	id_usuario  	: id_usuario,
+    }, end_no_bloquear_usuario);
+}
+
+function end_no_bloquear_usuario(xml) {
+	$(xml).find("response").each(function(i) {
+		if ($(this).find("result").text()=="ok") {
+
+		Swal.fire({
+			icon: 'success',
+			title: '¡Se resto un strike al usuario!',
+			text: $(this).find("result_text").text(),
+			timer: 1000,
+			timerProgressBar: true,
+		})
+
+		$("#div_strikes_usuarios").load(location.href + " #div_strikes_usuarios");
+
+		} else {
+			Swal.fire({
+				icon: 'error',
+				title: '¡Error!',
+				text: $(this).find("result_text").text(),
+				timer: 1000,
+				timerProgressBar: true,
+			})
+		}
+	});
 }
 
 // #region aceptar_denegar_prestamo

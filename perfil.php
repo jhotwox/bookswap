@@ -258,8 +258,8 @@ session_start();
 
                         if($id_status_usuario != 1) {
                             $mensaje_status = "* Para validar tu cuenta, actualiza tu foto de perfil y la credencial de UDG.";
-                            if($num_strikes > 2) {
-                                $mensaje_status = "* Tu cuenta ha sido bloqueada debido a que cometiste 3 infracciones.";
+                            if($num_strikes > 4) {
+                                $mensaje_status = "* Tu cuenta ha sido bloqueada debido a que cometiste 5 infracciones y un administrador decidio cerrar tu cuenta.";
                             }
                         } else{
                             $mensaje_status = "";
@@ -403,14 +403,14 @@ session_start();
                 <div class="ps-section__content">
 
                     <ul class="ps-section__links">
-                        <?php
-                            if ($num_strikes < 3) {
+                        <?php 
+                            if ($id_status_usuario == 1) {
                                 echo '<li id="li_prestamos_activos" class="active"><a type="button" href="" onclick="cambiar_opciones_perfil(2, event)">Mis Préstamos</a></li>';
                                 echo '<li id="li_prestamos_recibidos"><a type="button" href="" onclick="cambiar_opciones_perfil(6, event)">Préstamos Recibidos</a></li>';
                                 echo '<li id="li_mis_libros"><a type="button" href="" onclick="cambiar_opciones_perfil(1, event)">Mis Libros</a></li>';
                                 echo '<li id="li_historial_prestamos"><a type="button" href=""  onclick="cambiar_opciones_perfil(3, event)">Historial de Préstamos</a></li>';
                             }
-                        ?>    
+                        ?>
                     </ul>                    
 
                     <div class="ps-section--shopping ps-shopping-cart" style="margin-top: -120px;">
@@ -423,8 +423,9 @@ session_start();
                         <div class="container" id="div_prestamos_activos">
 
                             <div class="ps-section__header">
-
-                                <?php if ($num_strikes < 3) echo "<h1>Mis Préstamos</h1>"; ?>
+                                <?php 
+                                    if ($id_status_usuario == 1) echo "<h1>Mis Préstamos</h1>";
+                                ?>
 
                             </div>
 
@@ -445,9 +446,8 @@ session_start();
                                     <thead>
 
                                         <tr>
-
-                                            <?php
-                                                if ($num_strikes < 3) {
+                                            <?php 
+                                                if ($id_status_usuario == 1) {
                                                     echo "<th>Libro</th>";
                                                     echo "<th>Fecha de Préstamo</th>";
                                                     echo "<th>Fecha de Entrega</th>";
@@ -466,7 +466,7 @@ session_start();
                                         $query5 = "SELECT COUNT(*) AS cuantos FROM libros WHERE id_usuario = $id_usuario_global";
                                         $cuantos_libros = GetValueSQL($query5, 'cuantos');
 
-                                        if($cuantos_libros > 0 && $num_strikes < 3){
+                                        if($cuantos_libros > 0 && $id_status_usuario == 1){
                                             $query6 = "SELECT * FROM libros
                                             INNER JOIN status_libro ON libros.status = status_libro.id_status
                                             WHERE id_usuario = $id_usuario_global
