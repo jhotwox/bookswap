@@ -1,0 +1,22 @@
+{
+    "fontawesome": {
+        "normal": "fontawesome_normal_a07c54af815ea54af1b5e5aa13cc5f8b"
+    },
+    "work sans": {
+        "300": "D:\\Documents\\Programas\\XAMPP\\htdocs\\bookswap\\pdf\\dompdf\\vendor\\dompdf\\dompdf\/lib\/fonts\/work_sans_300_12801b8433993e71be7fe1ee666a30e7",
+        "normal": "D:\\Documents\\Programas\\XAMPP\\htdocs\\bookswap\\pdf\\dompdf\\vendor\\dompdf\\dompdf\/lib\/fonts\/work_sans_normal_93811a8be5d9454d4a02642be6d90731",
+        "500": "D:\\Documents\\Programas\\XAMPP\\htdocs\\bookswap\\pdf\\dompdf\\vendor\\dompdf\\dompdf\/lib\/fonts\/work_sans_500_48a1fd6eacb93ead2ddb641222144bb1",
+        "600": "D:\\Documents\\Programas\\XAMPP\\htdocs\\bookswap\\pdf\\dompdf\\vendor\\dompdf\\dompdf\/lib\/fonts\/work_sans_600_383cd0098d26ea6e6e8db3867335a761",
+        "bold": "work_sans_bold_50ab5fc00d8fabdd01ab758c1d52b5f9"
+    },
+    "font awesome 5 brands": {
+        "normal": "font_awesome_5_brands_normal_6b898e2c5cc213c4404811c323fdcab6"
+    },
+    "font awesome 5 free": {
+        "normal": "D:\\Documents\\Programas\\XAMPP\\htdocs\\bookswap\\pdf\\dompdf\\vendor\\dompdf\\dompdf\/lib\/fonts\/font_awesome_5_free_normal_09a636486ad6e3e7e715ee5a0373f2ab",
+        "900": "font_awesome_5_free_900_f6c1d66ca0f6a9c230936770c324b606"
+    },
+    "linearicons": {
+        "normal": "linearicons_normal_2da2c3d80e626e68bcf749042be50cb4"
+    }
+}

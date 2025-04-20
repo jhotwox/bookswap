@@ -259,7 +259,7 @@ session_start();
                         if($id_status_usuario != 1) {
                             $mensaje_status = "* Para validar tu cuenta, actualiza tu foto de perfil y la credencial de UDG.";
                             if($num_strikes > 2) {
-                                $mensaje_status = "* Tu cuenta ha sido bloqueada debido a que cometiste 3 infracciones.";
+                                $mensaje_status = "* Tu cuenta ha sido bloqueada debido a que cometiste 5 infracciones.";
                             }
                         } else{
                             $mensaje_status = "";
@@ -466,7 +466,7 @@ session_start();
                                         $query5 = "SELECT COUNT(*) AS cuantos FROM libros WHERE id_usuario = $id_usuario_global";
                                         $cuantos_libros = GetValueSQL($query5, 'cuantos');
 
-                                        if($cuantos_libros > 0 && $num_strikes < 3){
+                                        if($cuantos_libros > 0){
                                             $query6 = "SELECT * FROM libros
                                             INNER JOIN status_libro ON libros.status = status_libro.id_status
                                             WHERE id_usuario = $id_usuario_global

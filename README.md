@@ -1,6 +1,5 @@
 # PENDIENTES
 
-- Agregar mensaje de wishlist vacia
-- Recargar pagina al eliminar de la wishlist
+- Asegurarse de que el mes en wrapped funciona bien en el servidor
 
 # ERRORES
