@@ -544,8 +544,28 @@ session_start();
 	<script src="assets/plugins/sweetalert/sweetalert.min.js"></script>
 	<script src="assets/plugins/sweetalert/jquery.sweet-alert.custom.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <script>
+
+    const canvasToPDF = (canvas, name) => {
+      const imageData = canvas.toDataURL("image/png")
+      
+      const { jsPDF } = window.jspdf
+      
+      const imgWidth = canvas.width
+      const imgHeight = canvas.height
+      
+      const pdf = new jsPDF({
+        orientation: imgWidth > imgHeight ? "landscape" : "portrait",
+        unit: "px",
+        format: [imgWidth, imgHeight],
+      })
+      
+      pdf.addImage(imageData, "PNG", 0, 0, imgWidth, imgHeight)
+      pdf.save(name)
+    }
+
     document.getElementById("btnPrestamo").addEventListener("click", function () {
       const element = document.getElementById("prestados");
 
@@ -553,13 +573,7 @@ session_start();
         useCORS: true,
         allowTaint: true,
         scale: 2,
-      }).then(function (canvas) {
-        const image = canvas.toDataURL("image/png");
-        const link = document.createElement("a");
-        link.href = image;
-        link.download = "prestamos_<?php echo date('Y_m'); ?>.png";
-        link.click();
-      });
+      }).then(canvas => canvasToPDF(canvas, "prestamos_<?php echo date('Y_m'); ?>.pdf"));
     });
     
     document.getElementById("btnLeido").addEventListener("click", function () {
@@ -569,13 +583,7 @@ session_start();
         useCORS: true,
         allowTaint: true,
         scale: 2,
-      }).then(function (canvas) {
-        const image = canvas.toDataURL("image/png");
-        const link = document.createElement("a");
-        link.href = image;
-        link.download = "leidos_<?php echo date('Y_m'); ?>.png";
-        link.click();
-      });
+      }).then(canvas => canvasToPDF(canvas, "leidos_<?php echo date('Y_m'); ?>.pdf"));
     });
   </script>
 
